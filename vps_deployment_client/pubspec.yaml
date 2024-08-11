@@ -1,0 +1,14 @@
+name: vps_deployment_client
+description: Starting point for a Serverpod client.
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  serverpod_client: 2.0.2
+
+dependency_overrides: 
+  serverpod_client: 
+    path: /Users/paul/Git/serverpod//packages/serverpod_client 
+  serverpod_serialization: 
+    path: /Users/paul/Git/serverpod//packages/serverpod_serialization 

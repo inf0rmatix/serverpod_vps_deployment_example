@@ -1142,7 +1142,7 @@
   "installedModules": [
     {
       "module": "vps_deployment",
-      "version": "20240811095214446"
+      "version": "20240922084652077"
     },
     {
       "module": "serverpod",

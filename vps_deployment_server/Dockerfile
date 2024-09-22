@@ -1,4 +1,4 @@
-FROM dart:3.2.5 AS build
+FROM dart:3.3.0 AS build
 
 # Accept the GITHUB_PAT and GITHUB_USER as an argument
 ARG GITHUB_PAT

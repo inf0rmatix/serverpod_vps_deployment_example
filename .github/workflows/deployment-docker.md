@@ -10,6 +10,22 @@ deployment. If you want to use redis, you need to add it to the docker-compose
 file and the serverpod configuration. You need to setup the correct hostnames in
 the docker-compose-production file AND the serverpod configuration file.
 
+- [Preparing the server](#preparing-the-server)
+  - [Registering at Hetzner Cloud](#registering-at-hetzner-cloud)
+  - [Setting up an SSH key to connect to the server](#setting-up-an-ssh-key-to-connect-to-the-server)
+  - [Creating a new server](#creating-a-new-server)
+  - [Setting up the server](#setting-up-the-server)
+    - [Step 1: Create the new user](#step-1-create-the-new-user)
+    - [Step 2: Grant Docker permissions](#step-2-grant-docker-permissions)
+    - [Step 3: Enable SSH access](#step-3-enable-ssh-access)
+    - [Step 4: Set up SSH key-based authentication](#step-4-set-up-ssh-key-based-authentication)
+  - [Firewall configuration](#firewall-configuration)
+- [Preparing the domain](#preparing-the-domain)
+- [Preparing the repository](#preparing-the-repository)
+  - [Getting a GitHub Personal Access Token (optional)](#getting-a-github-personal-access-token-optional)
+  - [Adding the secrets to the repository](#adding-the-secrets-to-the-repository)
+- [Configuring the action](#configuring-the-action)
+
 ## Preparing the server
 
 This guide uses the "Hetzner" Cloud, you can use any server hoster, Hetzner is just a good and cheap option.
@@ -158,48 +174,86 @@ Copy the private key to the clipboard, including the lines `-----BEGIN OPENSSH P
 cat ~/.ssh/id_rsa
 ```
 
+### Firewall configuration
+
+Enter your server configuration and click on "Firewalls", then click on "Create Firewall".
+
+By default there will be two inbound rules, one for SSH (Which has Port 22) and one for ICMP (which has protocol set to ICMP).
+
+We will add two more for HTTP and HTTPS.
+
+1. Click on "Add Rule", name it HTTP and set the port to 80 and the protocol to TCP.
+2. Click on "Add Rule", name it HTTPS and set the port to 443 and the protocol to TCP.
+3. Make sure in "apply to" section your server is selected.
+4. Click on "Create Firewall".
+
+## Preparing the domain
+
+In order to be able to access your server, you need to have a domain.
+You can buy a domain from any domain provider, e.g., [Namecheap](https://www.namecheap.com/) or [GoDaddy](https://www.godaddy.com/).
+
+Once you have a domain, you need to set up the DNS records to point to your server.
+
+Create the following DNS records, replacing `Your server IP` with the IP address of your server.
+The setup is configured to use a reverse proxy to route the traffic to the correct service.
+
+| Type | Name     | Value          |
+| ---- | -------- | -------------- |
+| A    | api      | Your server IP |
+| A    | web      | Your server IP |
+| A    | insights | Your server IP |
+
+The full domain will be `api.your-domain.com`, `web.your-domain.com`, and `insights.your-domain.com`.
+
 ## Preparing the repository
 
-1. Create a new Personal-Access-Token (PAT) on GitHub.
-   Click on your profile picture in the top right corner, go to settings, (very
-   bottom) developer settings, personal access tokens, Tokens (classic), and
-   click on "Generate new token".
-   In the "Note" field at the top, set a name for the token, e.g., "Serverpod Deployment".
-   Set the expiration time to "No expiration" and check these scopes:
+### Getting a GitHub Personal Access Token (optional)
 
-   - repo (required to read repositories, especially private ones, i.e.
-     accessing packages in a different repository)
-   - write:packages (required to push docker images to the GitHub package registry)
-     At the bottom, click on "Generate token", copy the token and save it
-     somewhere safe.
+If your serverpod projects has to access other repositories, i.e., to install
+private packages, you need to create a GitHub Personal Access Token (PAT) and
+add it to the repository secrets.
 
-2. Go to your serverpod project repository, "Settings" -> "Secrets and variables" -> "Actions"
-   and create the following secrets:
-   - PAT_GITHUB: Enter your GitHub PAT token here
-   - PAT_USER_GITHUB: Enter your GitHub username here
-   - SSH_PRIVATE_KEY: Enter the private key you generated on the server here
-   - SSH_HOST: Enter the IP address of your server here
-   - SSH_USER: Enter the username you created on the server here, e.g., "github-actions"
+Otherwise you can skip this step.
+
+Create a new Personal-Access-Token (PAT) on GitHub.
+Click on your profile picture in the top right corner, go to settings, (very
+bottom) developer settings, personal access tokens, Tokens (classic), and click
+on "Generate new token".
+In the "Note" field at the top, set a name for the token, e.g., "Serverpod Deployment".
+Set the expiration time to "No expiration" and check these scopes:
+
+- **repo** (required to read repositories, especially private ones, i.e. accessing
+  packages in a different repository)
+- **write:packages** (required to push docker images to the GitHub package registry)
+
+At the bottom, click on "Generate token", copy the token and save it somewhere safe.
+
+### Adding the secrets to the repository
+
+Go to your serverpod project repository, "Settings" -> "Secrets and variables"
+-> "Actions" and create the following secrets:
+
+| Secret Name     | Required | Value                                                               |
+| --------------- | -------- | ------------------------------------------------------------------- |
+| PAT_USER_GITHUB | optional | Your GitHub username here                                           |
+| PAT_GITHUB      | optional | Your GitHub PAT token here                                          |
+| SSH_HOST        | required | The IP address of your server here                                  |
+| SSH_USER        | required | The username you created on the server here, e.g., "github-actions" |
+| SSH_PRIVATE_KEY | required | The private key you generated on the server here                    |
+
+The following will configure serverpod and the database:
+
+| Secret Name                           | Value                                                                                                                                      |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| SERVERPOD_DATABASE_NAME               | The name of the database, e.g., "serverpod"                                                                                                |
+| SERVERPOD_DATABASE_USER               | The database user, e.g., "serverpod"                                                                                                       |
+| SERVERPOD_DATABASE_PASSWORD           | The database password                                                                                                                      |
+| SERVERPOD_API_SERVER_PUBLIC_HOST      | The domain for the API server, this must be the same value as configured in the section [Preparing the domain](#preparing-the-domain)      |
+| SERVERPOD_WEB_SERVER_PUBLIC_HOST      | The domain for the Web server, this must be the same value as configured in the section [Preparing the domain](#preparing-the-domain)      |
+| SERVERPOD_INSIGHTS_SERVER_PUBLIC_HOST | The domain for the Insights server, this must be the same value as configured in the section [Preparing the domain](#preparing-the-domain) |
 
 ## Configuring the action
 
 From the root of your repository, open the `.github/workflows/deployment-docker.yml` file and adjust the following settings:
 
 - Adjust the `GHCR_ORG` variable and replace `<ORGANIZATION>` with your GitHub username, or the organization name if you got one.
--
-
-## Server setup
-
-on your vps / server you need to generate a keypair and add the public key to the authorized_keys file
-
-# ssh-keygen -t rsa -b 4096
-
-# cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-
-now copy the private key and add it to the secrets in the github repository
-
-# cat ~/.ssh/id_rsa
-
-SSH_PRIVATE_KEY: The private key for the SSH connection which you just 'cat'ed
-SSH_HOST: The host for the SSH connection -> IP or domain
-SSH_USER: The user for the SSH connection -> often root

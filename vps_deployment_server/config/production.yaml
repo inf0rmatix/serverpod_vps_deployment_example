@@ -44,3 +44,4 @@
 #   enabled: false
 #   host: redis.private-production.examplepod.com
 #   port: 6379
+prevent_yaml_package: breaking_serverpod

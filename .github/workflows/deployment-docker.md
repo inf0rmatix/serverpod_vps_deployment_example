@@ -25,6 +25,7 @@ the docker-compose-production file AND the serverpod configuration file.
   - [Getting a GitHub Personal Access Token (optional)](#getting-a-github-personal-access-token-optional)
   - [Adding the secrets to the repository](#adding-the-secrets-to-the-repository)
 - [Configuring the action](#configuring-the-action)
+- [Running the action](#running-the-action)
 
 ## Preparing the server
 
@@ -256,4 +257,16 @@ The following will configure serverpod and the database:
 
 From the root of your repository, open the `.github/workflows/deployment-docker.yml` file and adjust the following settings:
 
-- Adjust the `GHCR_ORG` variable and replace `<ORGANIZATION>` with your GitHub username, or the organization name if you got one.
+- Adjust the `GHCR_ORG` variable and replace `<ORGANIZATION>` with your GitHub
+  username, or the organization name if you got one.
+- At the top, you can change the branches that automatically trigger the
+  deployment. By default, it is set to `deployment-docker-production`. You can
+  always trigger the action manually to run it on a different branch.
+
+## Running the action
+
+Push your changes to the repository.
+
+To trigger the action, go to the "Actions" tab in your repository and click on
+the "Deploy to Docker" workflow. Click on "Run workflow" and select the branch
+you want to deploy.

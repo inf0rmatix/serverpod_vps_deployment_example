@@ -13,6 +13,10 @@ import 'src/generated/protocol.dart';
 void run(List<String> args) async {
   print(Platform.environment);
 
+  print(
+      'Serverpod Database Password is a String: ${Platform.environment['SERVERPOD_DATABASE_PASSWORD']}'
+          is String);
+
   // Initialize Serverpod and connect it with your generated code.
   final pod = Serverpod(
     args,

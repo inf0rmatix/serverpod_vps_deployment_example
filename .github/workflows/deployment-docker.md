@@ -254,6 +254,10 @@ TODO explain to configure traefik certificate mail for SSL
 
 TODO add code in deployment to create letsencrypt directory with correct permissions
 
+TODO test serverpod app with this setup
+
+TODO add section to adjust client usage to use correct domain
+
 ## Configuring the action
 
 From the root of your repository, open the `.github/workflows/deployment-docker.yml` file and adjust the following settings:

@@ -251,6 +251,8 @@ TODO add service secrets otherwise insights server will not work
 
 TODO explain to configure traefik certificate mail for SSL
 
+TODO add code in deployment to create letsencrypt directory with correct permissions
+
 ## Configuring the action
 
 From the root of your repository, open the `.github/workflows/deployment-docker.yml` file and adjust the following settings:

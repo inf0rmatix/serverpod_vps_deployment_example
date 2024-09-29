@@ -1,5 +1,4 @@
 import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_shared/serverpod_shared.dart';
 import 'package:vps_deployment_server/src/web/routes/root.dart';
 
 import 'src/generated/endpoints.dart';
@@ -10,11 +9,6 @@ import 'src/generated/protocol.dart';
 // configuring Relic (Serverpod's web-server), or need custom setup work.
 
 void run(List<String> args) async {
-  final passwords =
-      PasswordManager(runMode: ServerpodRunMode.production).loadPasswords();
-
-  print(passwords);
-
   // Initialize Serverpod and connect it with your generated code.
   final pod = Serverpod(
     args,

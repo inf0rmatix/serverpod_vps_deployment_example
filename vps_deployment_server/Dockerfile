@@ -34,7 +34,7 @@ COPY --from=build /app/migrations/ migrations/
 # Create an empty passwords.yaml file in the config directory
 RUN mkdir -p config 
 RUN touch config/passwords.yaml 
-RUN echo "# Comment to keep yaml package from breaking" >> config/passwords.yaml
+RUN echo "Test: prevent_yaml_package_from_breaking" >> config/passwords.yaml
 
 # Set appropriate permissions for config directory and passwords.yaml file
 RUN chmod 644 config/passwords.yaml

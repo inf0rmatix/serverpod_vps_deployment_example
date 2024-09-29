@@ -247,6 +247,10 @@ The following will configure serverpod and the database:
 | SERVERPOD_WEB_SERVER_PUBLIC_HOST      | The domain for the Web server, this must be the same value as configured in the section [Preparing the domain](#preparing-the-domain)      |
 | SERVERPOD_INSIGHTS_SERVER_PUBLIC_HOST | The domain for the Insights server, this must be the same value as configured in the section [Preparing the domain](#preparing-the-domain) |
 
+TODO add service secrets otherwise insights server will not work
+
+TODO explain to configure traefik certificate mail for SSL
+
 ## Configuring the action
 
 From the root of your repository, open the `.github/workflows/deployment-docker.yml` file and adjust the following settings:

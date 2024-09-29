@@ -31,6 +31,12 @@ COPY --from=build /app/config/ config/
 COPY --from=build /app/web/ web/
 COPY --from=build /app/migrations/ migrations/
 
+# Create an empty passwords.yaml file in the config directory
+RUN mkdir -p config && touch config/passwords.yaml
+
+# Set appropriate permissions for config directory and passwords.yaml file
+RUN chmod 644 config/passwords.yaml
+
 EXPOSE 8080
 EXPOSE 8081
 EXPOSE 8082

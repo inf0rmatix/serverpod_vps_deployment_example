@@ -131,7 +131,7 @@ users are allowed to SSH into the server. If it doesn't exist, add it at the end
 of the file. If there are multiple users, separate them with spaces:
 
 ```text
-AllowUsers github-actions
+AllowUsers root github-actions
 ```
 
 To save and exit the file, press `Ctrl + X`, then `Y`, and finally `Enter`.

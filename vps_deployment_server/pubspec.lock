@@ -156,23 +156,26 @@ packages:
   serverpod:
     dependency: "direct main"
     description:
-      path: "/Users/paul/Git/serverpod/packages/serverpod"
-      relative: false
-    source: path
+      name: serverpod
+      sha256: cb12291ff1659116aa99770ac46367301fc7f9e3041baf9ecc1c4023aee82b8c
+      url: "https://pub.dev"
+    source: hosted
     version: "2.1.1"
   serverpod_serialization:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "/Users/paul/Git/serverpod/packages/serverpod_serialization"
-      relative: false
-    source: path
+      name: serverpod_serialization
+      sha256: "5233c6a40deeb3e83066d984fa8d7e8c8c3c74eef67a6cdd8f9371a66f1183d3"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.1.1"
   serverpod_shared:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "/Users/paul/Git/serverpod/packages/serverpod_shared"
-      relative: false
-    source: path
+      name: serverpod_shared
+      sha256: b86f1c9724e1ae41383dc417650ba5dac1a0b1a3e09979f7e205dd1cd4ca1287
+      url: "https://pub.dev"
+    source: hosted
     version: "2.1.1"
   source_span:
     dependency: transitive

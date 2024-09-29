@@ -170,7 +170,7 @@ packages:
     source: hosted
     version: "2.1.1"
   serverpod_shared:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: serverpod_shared
       sha256: b86f1c9724e1ae41383dc417650ba5dac1a0b1a3e09979f7e205dd1cd4ca1287

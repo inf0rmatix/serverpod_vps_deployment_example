@@ -96,6 +96,33 @@ jobs:
       - name: List files in the directory
         run: ls -la ./vps_deployment_server/
 
+      - name: Check and Upgrade PostgreSQL Version
+        run: |
+          COMPOSE_DIR="./vps_deployment_server"
+          COMPOSE_PROJECT_NAME=$(basename "$COMPOSE_DIR")
+          VOLUME_NAME_IN_COMPOSE="vps_deployment_data"
+          VOLUME_NAME="${COMPOSE_PROJECT_NAME}_${VOLUME_NAME_IN_COMPOSE}"
+
+          # Docker commands run on the remote host via DOCKER_HOST
+          CURRENT=$(docker run --rm -v "${VOLUME_NAME}:/data:ro" alpine:latest cat /data/PG_VERSION 2>/dev/null || echo "")
+          # Grep runs locally on the checked-out file
+          TARGET=$(grep -E "image:\s*postgres:" ./vps_deployment_server/docker-compose.production.yaml | head -1 | sed -E 's/.*postgres:([0-9]+).*/\1/')
+
+          echo "Determined Volume Name: ${VOLUME_NAME}"
+          echo "Current PostgreSQL version in data directory: ${CURRENT:-none (fresh install)}"
+          echo "Target PostgreSQL version: ${TARGET}"
+
+          if [ -n "$CURRENT" ] && [ "$CURRENT" != "$TARGET" ]; then
+            echo "::warning::PostgreSQL version mismatch detected! Current: ${CURRENT}, Target: ${TARGET}"
+            echo "Attempting automatic upgrade..."
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/${{ github.event.repository.name }}/vps_deployment_server && chmod +x ./scripts/pg-upgrade.sh && POSTGRES_USER=${{ secrets.SERVERPOD_DATABASE_USER }} ./scripts/pg-upgrade.sh --yes"
+            echo "✓ Automatic upgrade script finished."
+          else
+            echo "✓ PostgreSQL version OK."
+          fi
+        env:
+          DOCKER_HOST: "ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}"
+
       - name: Run docker-compose
         run: |
           docker compose -f ./vps_deployment_server/docker-compose.production.yaml pull

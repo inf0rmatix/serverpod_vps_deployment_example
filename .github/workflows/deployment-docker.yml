@@ -113,10 +113,10 @@ jobs:
           echo "Target PostgreSQL version: ${TARGET}"
 
           if [ -n "$CURRENT" ] && [ "$CURRENT" != "$TARGET" ]; then
-            echo "::warning::PostgreSQL version mismatch detected! Current: ${CURRENT}, Target: ${TARGET}"
-            echo "Attempting automatic upgrade..."
-            ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/${{ github.event.repository.name }}/vps_deployment_server && chmod +x ./scripts/pg-upgrade.sh && POSTGRES_USER=${{ secrets.SERVERPOD_DATABASE_USER }} ./scripts/pg-upgrade.sh --yes"
-            echo "✓ Automatic upgrade script finished."
+            echo "::error::PostgreSQL version mismatch detected! Current: ${CURRENT}, Target: ${TARGET}"
+            echo "To upgrade, SSH to the server and run the following command (note: sensitive values like user/host/password are redacted by GitHub Actions. Please substitute <YOUR_SSH_USER>, <YOUR_SSH_HOST>, and <YOUR_POSTGRES_USER> with your actual values):"
+            echo "  ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa <YOUR_SSH_USER>@<YOUR_SSH_HOST> 'cd ~/${{ github.event.repository.name }}/vps_deployment_server && chmod +x ./scripts/pg-upgrade.sh && POSTGRES_USER=<YOUR_POSTGRES_USER> ./scripts/pg-upgrade.sh'"
+            exit 1
           else
             echo "✓ PostgreSQL version OK."
           fi

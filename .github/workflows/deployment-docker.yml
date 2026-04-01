@@ -11,6 +11,11 @@ on:
         type: choice
         options:
           - "production"
+      deploy_only:
+        description: "Skip image build and only redeploy compose"
+        required: false
+        default: false
+        type: boolean
 
 env:
   REGISTRY: ghcr.io
@@ -20,6 +25,7 @@ env:
 
 jobs:
   build-and-push-image:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.deploy_only != true }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -66,6 +72,7 @@ jobs:
 
   deploy:
     needs: build-and-push-image
+    if: ${{ always() && (needs.build-and-push-image.result == 'success' || needs.build-and-push-image.result == 'skipped') }}
     name: deploy to production
     runs-on: ubuntu-latest
     steps:
